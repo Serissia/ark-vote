@@ -1,0 +1,16 @@
+# 忽略 Python 编译文件
+__pycache__/
+*.py[cod]
+
+# 忽略虚拟环境
+venv/
+env/
+.venv/
+
+# 忽略数据库文件
+*.db
+*.sqlite3
+instance/
+
+# 忽略 VS Code 的个人配置
+.vscode/
