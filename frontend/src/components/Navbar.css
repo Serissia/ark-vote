@@ -1,0 +1,64 @@
+/* src/components/Navbar.css */
+
+.glass-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+
+    /* 半透明玻璃效果 */
+    background: rgba(23, 26, 33, 0.7);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    /* 边框效果 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    /* 布局 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+.nav-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-item {
+    cursor: pointer;
+    color: #c6d4df;
+    font-size: 16px;
+    transition: all 0.3s ease; /* 平滑过渡效果 */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.nav-item:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.active {
+    color: #66c0f4;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(102, 192, 244, 0.1);
+}
