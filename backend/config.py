@@ -16,28 +16,31 @@ MAX_VOTES_PER_IP = 1  # 简单防刷：每个IP限制投几次
 # 结构：ID -> {标题, 副标题, 候选人列表, 允许选几个, 分数权重}
 VOTE_CATEGORIES = [
     {
-        "id": "best_medic",
-        "title": "最佳治疗干员",
-        "subtitle": "把敌人全解决掉是最好的治疗……什么，你当真了？",
-        "max_choices": 3,  # 该奖项最多选3人
-        # 对应 mark[i][j]: 第1名得10分，第2名7分，第3名5分
-        "weights": [10, 7, 5], 
+        "id": "six_star_2025",
+        "title": "2025年度六星干员",
+        "subtitle": "别问我为什么没抽到，问就是为了在这个列表里看他们一眼。", #
+        "max_choices": 4,  # 最多选4个
+        "weights": [10, 7, 5, 3], # 对应 mark[i][j] 分值
         "candidates": [
-            {"id": "kaltsit", "name": "凯尔希", "img_half": "url_to_half_kaltsit", "img_avatar": "url_to_head_kaltsit"},
-            {"id": "eyja_alt", "name": "纯烬艾雅法拉", "img_half": "url_to_half_eyja", "img_avatar": "url_to_head_eyja"},
-            {"id": "reed_alt", "name": "焰影苇草", "img_half": "url_to_half_reed", "img_avatar": "url_to_head_reed"},
-            # ... 更多干员
-        ]
-    },
-    {
-        "id": "best_vanguard",
-        "title": "最佳先锋干员",
-        "subtitle": "谁说先锋就只能回费？",
-        "max_choices": 2,
-        "weights": [10, 5], # 只选2人，第一名10分，第二名5分
-        "candidates": [
-            {"id": "ines", "name": "伊内丝", "img_half": "...", "img_avatar": "..."},
-            {"id": "muelsyse", "name": "缪尔赛思", "img_half": "...", "img_avatar": "..."},
+            {"id": "zhuhuang", "name": "烛煌", "img_half": "https://free.picui.cn/free/2025/12/18/6943b4349298e.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45f8673b.png"},
+            {"id": "yu", "name": "余", "img_half": "https://free.picui.cn/free/2025/12/18/6943b433c5939.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45d1a96f.png"},
+            {"id": "yindelaixi", "name": "隐德来希", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42f4d334.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45b81b00.png"},
+            {"id": "simang", "name": "死芒", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42a1ac92.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b4579ec8d.png"},
+            {"id": "mon3tr", "name": "Mon3tr", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42566f19.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b4521f702.png"},
+            {"id": "jiaobanji", "name": "信仰搅拌机", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42ec4bda.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45ae41f7.png"},
+            {"id": "leimiuan", "name": "蕾缪安", "img_half": "https://free.picui.cn/free/2025/12/18/6943b425c47fb.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45201995.png"},
+            {"id": "nengtianshi_alt", "name": "新约能天使", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42e928d0.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45ab16dd.png"},
+            {"id": "jiushen", "name": "酒神", "img_half": "https://free.picui.cn/free/2025/12/18/6943b425c5a82.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b4523adbe.png"},
+            {"id": "sitingjingzhe", "name": "司霆惊蛰", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42a0c471.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b4576fea9.png"},
+            {"id": "dianhu", "name": "电弧", "img_half": "https://free.picui.cn/free/2025/12/18/6943b425974ac.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b451cd283.png"},
+            {"id": "yao", "name": "遥", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42edce4c.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45b6aa4e.png"},
+            {"id": "zhanyexingxiong", "name": "斩业星熊", "img_half": "https://free.picui.cn/free/2025/12/18/6943b4341b82d.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45e9995e.png"},
+            {"id": "xiangzi", "name": "丰川祥子", "img_half": "https://free.picui.cn/free/2025/12/18/6943b425c1274.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45253f65.png"},
+            {"id": "zhenyan", "name": "真言", "img_half": "https://free.picui.cn/free/2025/12/18/6943b43447640.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45f5f50e.png"},
+            {"id": "suguangxingyuan", "name": "溯光星源", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42e3a657.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45997abc.png"},
+            {"id": "shenglingchuxue", "name": "圣聆初雪", "img_half": "https://free.picui.cn/free/2025/12/18/6943b429da319.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b4575e451.png"},
+            {"id": "linyuyinhui", "name": "凛御银灰", "img_half": "https://free.picui.cn/free/2025/12/18/6943b429670fd.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b455e1218.png"},
+            {"id": "nasiti", "name": "娜斯提", "img_half": "https://free.picui.cn/free/2025/12/18/6943b429e020b.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b456ce71d.png"}
         ]
     }
 ]
