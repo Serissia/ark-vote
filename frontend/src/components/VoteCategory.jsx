@@ -1,7 +1,8 @@
 import React from 'react';
+import { Button, Space } from 'antd';
 import './VoteCategory.css';
 
-const VoteCategory = ({ category, selectedIds, onSelect, isSubmitted }) => {
+const VoteCategory = ({ category, selectedIds, onSelect, isSubmitted, onClear, onSubmit }) => {
   return (
     <div className={`category-block ${isSubmitted ? 'submitted' : ''}`}>
       <div className="category-header">
@@ -25,13 +26,34 @@ const VoteCategory = ({ category, selectedIds, onSelect, isSubmitted }) => {
               
               {/* 动态显示选中的次序 (1, 2, 3...) */}
               {isSelected && <div className="order-badge">{orderIndex + 1}</div>}
-
+              
               <div className="role-info">
                 <div className="role-name">{candidate.name}</div>
               </div>
             </div>
           );
         })}
+      </div>
+
+      {/* 每个奖项专属的按钮区域 */}
+      <div className="category-actions">
+        <Space>
+          <Button 
+            ghost 
+            onClick={onClear} 
+            disabled={isSubmitted}
+          >
+            清空选择
+          </Button>
+          <Button 
+            type="primary" 
+            onClick={onSubmit} 
+            disabled={isSubmitted || selectedIds.length === 0}
+            className="submit-btn"
+          >
+            确认提交
+          </Button>
+        </Space>
       </div>
     </div>
   );

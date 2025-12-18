@@ -15,6 +15,26 @@ MAX_VOTES_PER_IP = 1  # 简单防刷：每个IP限制投几次
 # 奖项配置结构
 # 结构：ID -> {标题, 副标题, 候选人列表, 允许选几个, 分数权重}
 VOTE_CATEGORIES = [
+    # TODO：最佳输出副标题：手段有很多，结局却只有一种。
+    # 最佳节奏（“谁来审判？”）；最佳剧情；
+    # 最佳强度通胀（你知道吗，到2025年末，超大杯干员已经有41名）；
+    # 最佳强度紧缩（正稳步推进“一百个百嘉计划”）
+    {
+        "id": "best_support",
+        "title": "最佳援助干员",
+        "subtitle": "即使是看似最微小的工作，干员们也会全力以赴。何况事实上，一点也不微小。",
+        "max_choices": 3,  # 最多选3个
+        "weights": [5, 3, 2], # 对应 mark[i][j] 分值
+        "candidates": [
+            {"id": "mon3tr", "name": "Mon3tr", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42566f19.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b4521f702.png"},
+            {"id": "jiushen", "name": "酒神", "img_half": "https://free.picui.cn/free/2025/12/18/6943b425c5a82.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b4523adbe.png"},
+            {"id": "dianhu", "name": "电弧", "img_half": "https://free.picui.cn/free/2025/12/18/6943b425974ac.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b451cd283.png"},
+            {"id": "yao", "name": "遥", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42edce4c.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45b6aa4e.png"},
+            {"id": "suguangxingyuan", "name": "溯光星源", "img_half": "https://free.picui.cn/free/2025/12/18/6943b42e3a657.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b45997abc.png"},
+            {"id": "linyuyinhui", "name": "凛御银灰", "img_half": "https://free.picui.cn/free/2025/12/18/6943b429670fd.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b455e1218.png"},
+            {"id": "nasiti", "name": "娜斯提", "img_half": "https://free.picui.cn/free/2025/12/18/6943b429e020b.png", "img_avatar": "https://free.picui.cn/free/2025/12/18/6943b456ce71d.png"}
+        ]
+    },
     {
         "id": "six_star_2025",
         "title": "2025年度六星干员",

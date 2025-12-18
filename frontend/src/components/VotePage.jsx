@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Space, message, Divider } from 'antd';
+import { message } from 'antd';
 import VoteCategory from '../components/VoteCategory';
 
 const VotePage = () => {
   const [categories, setCategories] = useState([]);
-  const [votes, setVotes] = useState({}); // 格式: { categoryId: [id1, id2] }
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [votes, setVotes] = useState({}); // { catId: [id1, id2] }
+  const [submittedStatus, setSubmittedStatus] = useState({}); // { catId: true/false }
 
   useEffect(() => {
     // 从后端 API 获取配置
@@ -16,7 +16,7 @@ const VotePage = () => {
   }, []);
 
   const handleSelect = (catId, candId) => {
-    if (isSubmitted) return;
+    if (submittedStatus[catId]) return; // 如果该奖项已提交，禁止操作
 
     // 找到该奖项的最大选择数限制
     const catConfig = categories.find(c => c.id === catId);
@@ -27,65 +27,49 @@ const VotePage = () => {
     if (currentSelected.includes(candId)) {
       // 取消选中
       setVotes({ ...votes, [catId]: currentSelected.filter(id => id !== candId) });
-    } else {
+    } else if (currentSelected.length < maxChoices) {
       // 检查是否达到上限
-      if (currentSelected.length < maxChoices) {
-        setVotes({ ...votes, [catId]: [...currentSelected, candId] });
-      } else {
-        message.warning(`该奖项最多只能选择 ${maxChoices} 位干员`);
+      setVotes({ ...votes, [catId]: [...currentSelected, candId] });
+    } else {
+      message.warning(`该奖项最多只能选择 ${maxChoices} 位干员`);
+    }
+  };
+
+  // 针对单个奖项的清空
+  const handleClear = (catId) => {
+    setVotes({ ...votes, [catId]: [] });
+  };
+
+  // 针对单个奖项的提交
+  const handleSubmit = (catId) => {
+    const selected = votes[catId] || [];
+    if (selected.length === 0) return;
+
+    // 发送数据到后端 API
+    axios.post('/api/vote', {
+      category_id: catId,
+      choices: selected
+    }).then(res => {
+      if (res.data.status === 'success') {
+        setSubmittedStatus({ ...submittedStatus, [catId]: true });
+        message.success(`${catId} 投票成功！`);
       }
-    }
-  };
-
-  const handleSubmit = () => {
-    if (Object.keys(votes).length === 0) {
-      return message.warning("请至少投出一票再提交");
-    }
-    // 模拟提交成功
-    setIsSubmitted(true);
-    message.success("投票成功！");
-    console.log("最终投票结果：", votes);
-  };
-
-  const handleClear = () => {
-    setVotes({});
-    setIsSubmitted(false);
+    }).catch(err => message.error("提交失败，请稍后重试"));
   };
 
   return (
-    <div style={{ paddingBottom: '100px' }}>
+    <div className="vote-page-container">
       {categories.map(cat => (
         <VoteCategory
           key={cat.id}
           category={cat}
           selectedIds={votes[cat.id] || []}
+          isSubmitted={submittedStatus[cat.id]} // 独立的提交状态
           onSelect={(candId) => handleSelect(cat.id, candId)}
-          isSubmitted={isSubmitted}
+          onClear={() => handleClear(cat.id)}
+          onSubmit={() => handleSubmit(cat.id)}
         />
       ))}
-
-      {/* 底部交互按钮 */}
-      <Divider style={{ borderColor: 'rgba(255,255,255,0.1)' }} />
-      <div style={{ textAlign: 'center', marginTop: '40px' }}>
-        <Space size="large">
-          <Button
-            ghost size="large"
-            onClick={handleClear}
-            disabled={isSubmitted}
-          >
-            清空所有选择
-          </Button>
-          <Button 
-            type="primary" 
-            size="large" 
-            onClick={handleSubmit} 
-            disabled={isSubmitted}
-            style={{ backgroundColor: '#a4d007', borderColor: '#a4d007', color: '#000', fontWeight: 'bold' }}
-          >
-            确认提交投票
-          </Button>
-        </Space>
-      </div>
     </div>
   );
 };

@@ -100,14 +100,53 @@
 }
 
 /* 提交后的特效：未选择的灰掉，选择的高亮 */
-.submitted .role-card:not(.selected) {
+/* .submitted .role-card:not(.selected) {
     filter: grayscale(1) brightness(0.3);
     cursor: default;
     pointer-events: none;
-}
+} */
 
 .submitted .role-card.selected {
     cursor: default;
     pointer-events: none;
     border-color: #ffca28; /* 最终确认为金色边框 */
+}
+
+/* 按钮区域居中 */
+.category-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+}
+
+.category-actions .ant-btn {
+    transition: all 0.3s ease;
+}
+
+.category-actions .ant-btn-background-ghost:disabled {
+    color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: transparent !important;
+    cursor: not-allowed;
+}
+
+.submit-btn {
+    background-color: #a4d007 !important;
+    border-color: #a4d007 !important;
+    color: #000 !important;
+    font-weight: bold;
+}
+
+.submit-btn:disabled {
+    background-color: rgba(164, 208, 7, 0.1) !important; /* 极淡的绿色背景 */
+    border-color: rgba(164, 208, 7, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+    cursor: not-allowed;
+}
+
+/* 之前定义的 .submitted 类现在只作用于对应的卡片组 */
+.category-block.submitted .role-card:not(.selected) {
+    filter: grayscale(1) brightness(0.3);
+    pointer-events: none;
 }

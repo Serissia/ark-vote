@@ -49,9 +49,9 @@ def submit_vote():
         return jsonify({"status": "error", "message": "选择的干员数量过多"}), 400
     
     # 3. 验证：是否重复投票？
-    existing_vote = VoteRecord.query.filter_by(ip_address=user_ip, category_id=cat_id).first()
-    if existing_vote:
-        return jsonify({"status": "error", "message": "您已经投过该奖项了"}), 403
+    # existing_vote = VoteRecord.query.filter_by(ip_address=user_ip, category_id=cat_id).first()
+    # if existing_vote:
+    #     return jsonify({"status": "error", "message": "您已经投过该奖项了"}), 403
 
     # 4. 保存入库
     new_vote = VoteRecord(
