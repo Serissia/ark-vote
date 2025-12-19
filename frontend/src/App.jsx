@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import VotePage from './components/VotePage';
+import StatsPage from './components/StatsPage';
 
 function App() {
   // 定义一个状态，记录当前是在 "vote" 页面还是 "stats" 页面
@@ -13,13 +14,11 @@ function App() {
 
       {/* 2. 主内容区域 */}
       <main style={{ paddingTop: '100px', maxWidth: '1400px', margin: '0 auto' }}>
-        {activeTab === 'vote' ? (
+        {activeTab === 'vote' && (
           <VotePage />
-        ) : (
-          <div style={{ color: '#fff', textAlign: 'center', marginTop: '100px' }}>
-            <h2>📊 总数据统计正在开发中...</h2>
-            <p>敬请期待...</p>
-          </div>
+        )}
+        {activeTab === 'stats' && (
+          <StatsPage />
         )}
       </main>
     </div>

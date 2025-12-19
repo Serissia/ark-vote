@@ -52,7 +52,7 @@ const VotePage = () => {
     }).then(res => {
       if (res.data.status === 'success') {
         setSubmittedStatus({ ...submittedStatus, [catId]: true });
-        message.success(`${catId} 投票成功！`);
+        message.success(`投票成功！`);
       }
     }).catch(err => message.error("提交失败，请稍后重试"));
   };

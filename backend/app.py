@@ -1,7 +1,7 @@
 # backend/app.py
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from config import Config, VOTE_CATEGORIES
+from config import Config, VOTE_CATEGORIES, ALL_CANDIDATES
 from models import db, VoteRecord
 
 app = Flask(__name__)
@@ -18,10 +18,29 @@ with app.app_context():
 # ---------------------------------------------------------
 @app.route('/api/config', methods=['GET'])
 def get_config():
-    return jsonify({
-        "status": "success",
-        "categories": VOTE_CATEGORIES
-    })
+    # 动态拼装完整配置
+    full_categories = []
+    
+    for cat in VOTE_CATEGORIES:
+        # 将 ID 列表转换为 包含详情的对象列表
+        detailed_candidates = []
+        for cand_id in cat['candidates_ids']:
+            cand_info = ALL_CANDIDATES.get(cand_id, {})
+            detailed_candidates.append({
+                "id": cand_id,
+                **cand_info # 将 name, img_half, img_avatar 解构进去
+            })
+            
+        # 构建返回给前端的奖项对象
+        full_categories.append({
+            "id": cat['id'],
+            "title": cat['title'],
+            "subtitle": cat['subtitle'],
+            "max_choices": cat['max_choices'],
+            "candidates": detailed_candidates # 拼装好的完整数据
+        })
+        
+    return jsonify({"categories": full_categories})
 
 # ---------------------------------------------------------
 # API 2: 提交投票
@@ -71,13 +90,14 @@ def submit_vote():
 def get_stats():
     stats_result = {}
 
+    # 遍历配置中的每一个奖项
     for cat in VOTE_CATEGORIES:
         cat_id = cat['id']
-        weights = cat['weights']
+        weights = cat.get('weights', [1])  # 获取权重，默认至少为1分
         
         # 初始化该奖项下每个干员的分数为0
-        scores = {candidate['id']: 0 for candidate in cat['candidates']}
-        
+        scores = {cand_id: 0 for cand_id in cat['candidates_ids']}
+
         # 从数据库捞出该奖项的所有投票
         votes = VoteRecord.query.filter_by(category_id=cat_id).all()
         
