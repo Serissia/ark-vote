@@ -5,8 +5,16 @@ import VoteCategory from '../components/VoteCategory';
 
 const VotePage = () => {
   const [categories, setCategories] = useState([]);
-  const [votes, setVotes] = useState({}); // { catId: [id1, id2] }
-  const [submittedStatus, setSubmittedStatus] = useState({}); // { catId: true/false }
+  
+  // 从本地读取数据
+  const [votes, setVotes] = useState(() => {
+    const saved = localStorage.getItem('ark_votes');
+    return saved ? JSON.parse(saved) : {};
+  }); // { catId: [id1, id2] }
+  const [submittedStatus, setSubmittedStatus] = useState(() => {
+    const saved = localStorage.getItem('ark_submitted_status');
+    return saved ? JSON.parse(saved) : {};
+  }); // { catId: true/false }
 
   useEffect(() => {
     // 从后端 API 获取配置
@@ -14,6 +22,14 @@ const VotePage = () => {
       .then(res => setCategories(res.data.categories))
       .catch(err => message.error("无法加载配置数据"));
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('ark_votes', JSON.stringify(votes));
+  }, [votes]);
+
+  useEffect(() => {
+    localStorage.setItem('ark_submitted_status', JSON.stringify(submittedStatus));
+  }, [submittedStatus]);
 
   const handleSelect = (catId, candId) => {
     if (submittedStatus[catId]) return; // 如果该奖项已提交，禁止操作
@@ -37,7 +53,13 @@ const VotePage = () => {
 
   // 针对单个奖项的清空
   const handleClear = (catId) => {
-    setVotes({ ...votes, [catId]: [] });
+    const newVotes = { ...votes };
+    delete newVotes[catId];
+    setVotes(newVotes);
+
+    const newStatus = { ...submittedStatus };
+    delete newStatus[catId];
+    setSubmittedStatus(newStatus);
   };
 
   // 针对单个奖项的提交

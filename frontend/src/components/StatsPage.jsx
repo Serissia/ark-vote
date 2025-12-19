@@ -39,11 +39,14 @@ const StatsPage = () => {
                 // 根据 ID 找到对应的干员详细信息
                 const info = cat.candidates.find(c => c.id === candId);
                 const percentage = (score / maxScore) * 100;
+                const isTopOne = index === 0 && score > 0;
 
                 return (
-                  <div key={candId} className="stats-row">
+                  <div key={candId} className={`stats-row ${isTopOne ? 'top-one-row' : ''}`}>
                     {/* 排名 */}
-                    <div className="rank-num">{index + 1}</div>
+                    <div className="rank-num">
+                      {isTopOne ? <span className="crown-icon">👑</span> : index + 1}
+                    </div>
                     
                     {/* 头像 */}
                     <div className="avatar-box">
@@ -53,12 +56,14 @@ const StatsPage = () => {
                     {/* 名字与条形图 */}
                     <div className="bar-area">
                       <div className="name-score">
-                        <span>{info?.name}</span>
+                        <span className={isTopOne ? 'top-one-name' : ''}>
+                        {info?.name} {isTopOne && <small>(冠军)</small>}
+                        </span>
                         <span className="score-val">{score} 分</span>
                       </div>
                       <div className="bar-bg">
                         <div 
-                          className="bar-fill" 
+                          className={`bar-fill ${isTopOne ? 'top-one-fill' : ''}`} 
                           style={{ width: `${percentage}%`, transitionDelay: `${index * 0.1}s` }}
                         ></div>
                       </div>

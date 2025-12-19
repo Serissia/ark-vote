@@ -74,3 +74,35 @@
     width: 0; /* 配合 transition 实现动画效果 */
     transition: width 1s ease-out;
 }
+
+/* 冠军整行高亮 */
+.top-one-row {
+    background: rgba(164, 208, 7, 0.1) !important;
+    border: 1px solid rgba(164, 208, 7, 0.3);
+    box-shadow: inset 0 0 20px rgba(164, 208, 7, 0.05);
+}
+
+@keyframes crown-bounce {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-5px) rotate(5deg); }
+}
+
+/* 皇冠图标动画 */
+.crown-icon {
+    font-size: 24px;
+    filter: drop-shadow(0 0 5px gold);
+    animation: crown-bounce 2s infinite;
+    display: inline-block;
+}
+
+/* 冠军名字发光 */
+.top-one-name {
+    color: #ffca28;
+    text-shadow: 0 0 8px rgba(255, 202, 40, 0.6);
+    font-weight: 800;
+}
+
+/* 冠军条形图变为金色渐变 */
+.top-one-fill {
+    background: linear-gradient(90deg, #ffca28, #f44336) !important;
+}

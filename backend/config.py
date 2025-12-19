@@ -37,12 +37,14 @@ ALL_CANDIDATES = { # ID -> {name, img_half, img_avatar} 全量干员库
 # 奖项配置结构
 # 结构：ID -> {标题, 副标题, 候选人列表, 允许选几个, 分数权重}
 VOTE_CATEGORIES = [
+    # TODO:
+    # Speical:昨夜圆车
     {
         "id": "best_support",
         "title": "最佳援助",
         "subtitle": "即使是看似最微小的工作，干员们也会全力以赴。何况事实上，一点也不微小。",
-        "max_choices": 3,  # 最多选3个
-        "weights": [5, 3, 2], # 对应 mark[i][j] 分值
+        "max_choices": 3,
+        "weights": [5, 3, 2],
         "candidates_ids": [
             "op02", "op05", "op08", "op09", "op11",
             "op12", "op16", "op18", "op19"
@@ -72,9 +74,22 @@ VOTE_CATEGORIES = [
         ]
     },
     {
+        "id": "best_vanilla",
+        "title": "最香草（",
+        "subtitle": "终于欲望吧...",
+        "max_choices": 3,
+        "weights": [5, 3, 2],
+        "candidates_ids": [
+            "op01", "op02", "op03", "op04", "op05",
+            "op06", "op07", "op08", "op09", "op10",
+            "op11", "op12", "op13", "op14", "op15",
+            "op16", "op17", "op18", "op19"
+        ]
+    },
+    {
         "id": "best_story",
         "title": "最佳剧情塑造",
-        "subtitle": "有些故事，注定无法被忘记。",
+        "subtitle": "有些故事，注定无法被遗忘。",
         "max_choices": 3,
         "weights": [5, 3, 2],
         "candidates_ids": [
@@ -108,7 +123,7 @@ VOTE_CATEGORIES = [
     {
         "id": "six_star_2025",
         "title": "2025年度六星干员",
-        "subtitle": "别问我为什么没抽到，问就是为了在这个列表里看他们一眼。",
+        "subtitle": "欢迎来到，罗德岛——",
         "max_choices": 4,
         "weights": [10, 7, 5, 4],
         "candidates_ids": [
