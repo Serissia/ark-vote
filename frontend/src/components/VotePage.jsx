@@ -21,6 +21,11 @@ const VotePage = () => {
   const [showDLC, setShowDLC] = useState(false);
 
   useEffect(() => {
+    // 切换页面时，立刻回到顶部
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     // 从后端 API 获取配置
     axios.get('/api/config')
       .then(res => setCategories(res.data.categories))

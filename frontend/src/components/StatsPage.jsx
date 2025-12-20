@@ -9,7 +9,12 @@ const StatsPage = () => {
   const [spStats, setSpStats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const isDLCUnlocked = localStorage.getItem('sp_voted_box_ids') !== null;
+  const isDLCUnlocked = localStorage.getItem('sp_is_submitted') !== null;
+
+  useEffect(() => {
+    // 切换页面时，立刻回到顶部
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,11 +28,8 @@ const StatsPage = () => {
         });
 
         if (isDLCUnlocked) {
-          Promise.all([
-            axios.get('/api/sp/stats')
-          ]).then(([spStatsRes]) => {
-            setSpStats(spStatsRes.data.stats);
-          });
+          const resSp = await axios.get('/api/sp/stats');
+          setSpStats(resSp.data.stats);
         }
       } catch (err) {
         console.error("加载统计失败", err);
@@ -37,18 +39,6 @@ const StatsPage = () => {
     };
     fetchData();
   }, [isDLCUnlocked]);
-
-  useEffect(() => {
-    // 同时获取配置和统计分数
-    Promise.all([
-      axios.get('/api/config'),
-      axios.get('/api/stats')
-    ]).then(([configRes, statsRes]) => {
-      setCategories(configRes.data.categories);
-      setStatsData(statsRes.data.stats);
-      setLoading(false);
-    });
-  }, []);
 
   if (loading) return <div className="stats-loading"><Spin size="large" tip="正在翻阅档案..." /></div>;
   if (!statsData) return <Empty description="暂无数据" />;

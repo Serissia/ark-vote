@@ -18,6 +18,11 @@ const SPVotePage = ({ onClose }) => {
   });
 
   useEffect(() => {
+    // 切换页面时，立刻回到顶部
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     // 请求专属的 SP 接口
     axios.get('/api/sp/config').then(res => {
       setConfig(res.data);
