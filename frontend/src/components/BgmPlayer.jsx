@@ -1,48 +1,67 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Tooltip } from 'antd';
-import { SoundOutlined, MutedOutlined } from '@ant-design/icons';
+import { Button, Tooltip, message } from 'antd';
+import { SoundOutlined, MutedOutlined, LoadingOutlined } from '@ant-design/icons';
 import './BgmPlayer.css';
 
 const BgmPlayer = ({ audioUrl, label }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef(new Audio(audioUrl));
+  const [isLoading, setIsLoading] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    audio.loop = True; // 循环播放
-    
-    // 强制设置初始状态
-    audio.pause(); 
-
-    // 组件卸载时停止音乐
     return () => {
-      audio.pause();
-      audio.currentTime = 0;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
     };
   }, []);
 
-  const togglePlay = () => {
+  const handleTogglePlay = async () => {
+    if (!audioRef.current) {
+      setIsLoading(true);
+      try {
+        const audio = new Audio(audioUrl);
+        audio.loop = true;
+        await new Promise((resolve, reject) => {
+          audio.oncanplaythrough = resolve;
+          audio.onerror = reject;
+          audio.load();
+        });
+        audioRef.current = audio;
+      } catch (error) {
+        message.error("无法同步神经链接");
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(false);
+    }
+
+    const audio = audioRef.current;
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
     } else {
-      audioRef.current.play().catch(err => {
-        console.error("播放失败:", err);
-      });
+      audio.play().catch(() => message.warning("需要手动唤醒音频流"));
     }
     setIsPlaying(!isPlaying);
   };
 
   return (
-    <div className="bgm-player-widget">
-      <Tooltip title={isPlaying ? "关闭音乐" : `播放 BGM: ${label}`}>
+    <div className={`bgm-fixed-anchor ${isPlaying ? 'is-active' : ''}`}>
+      {isPlaying && <div className="bgm-pulse-ring"></div>}
+      
+      <Tooltip title={isPlaying ? "静默" : `唤醒记忆：${label}`} placement="left">
         <Button 
-          shape="circle" 
-          icon={isPlaying ? <SoundOutlined spin /> : <MutedOutlined />} 
-          onClick={togglePlay}
-          danger={isPlaying}
-          className="bgm-btn"
+          type="text"
+          className={`bgm-ark-btn ${isPlaying ? 'playing' : ''}`}
+          icon={isLoading ? <LoadingOutlined /> : (isPlaying ? <SoundOutlined /> : <MutedOutlined />)} 
+          onClick={handleTogglePlay}
         />
       </Tooltip>
+      
+      {/* 侧边小装饰条 */}
+      <div className="bgm-deco-line"></div>
     </div>
   );
 };

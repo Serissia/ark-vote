@@ -4,6 +4,12 @@
     margin: 0 auto;
 }
 
+.stats-tower-header {
+    text-align: center;
+    margin: 40px 0 60px 0;
+    color: #fff;
+}
+
 .stats-section {
     margin-bottom: 80px;
 }

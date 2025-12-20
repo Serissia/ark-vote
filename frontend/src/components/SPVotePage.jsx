@@ -3,6 +3,7 @@ import axios from 'axios';
 import { message, Button, Spin, Result, Space, Popconfirm } from 'antd';
 import BossCard from '../components/BossCard';
 import './SPVotePage.css';
+import BgmPlayer from '../components/BgmPlayer';
 
 const SPVotePage = ({ onClose }) => {
   const [config, setConfig] = useState(null);
@@ -70,6 +71,7 @@ const SPVotePage = ({ onClose }) => {
 
   return (
     <div className="sp-page-overlay">
+      <BgmPlayer audioUrl="/audio/碧瞳中.mp3" label="in your blue eyes" />
       <div className="sp-page-container">
         <header className="sp-header">
           <h1>{config.title}</h1>

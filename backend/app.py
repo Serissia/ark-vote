@@ -142,8 +142,6 @@ def get_stats():
         "stats": stats_result
     })
 
-sp_votes_storage = {} 
-
 @app.route('/api/sp/config', methods=['GET'])
 def get_sp_config():
     """获取 Boss DLC 专用的详细配置"""
@@ -174,33 +172,43 @@ def submit_sp_vote():
     if len(box_ids) > SP_CATEGORY['max_choices']:
         return jsonify({"error": "超出最大选择数"}), 400
     
-    weights = SP_CATEGORY.get('weights', [1])
-
-    for idx, box_id in enumerate(box_ids):
-        
-        weight = weights[idx] if idx < len(weights) else 1
-        sp_votes_storage[box_id] = sp_votes_storage.get(box_id, 0) + weight
+    new_vote = VoteRecord(
+        ip_address=request.remote_addr,
+        category_id=SP_CATEGORY['id'],
+        choices=",".join(box_ids)
+    )
+    db.session.add(new_vote)
+    db.session.commit()
     
     return jsonify({"message": "记忆已成功同步"})
 
 @app.route('/api/sp/stats', methods=['GET'])
 def get_sp_stats():
     """获取 Boss 投票统计结果（带详细信息）"""
+
+    records = VoteRecord.query.filter_by(category_id=SP_CATEGORY['id']).all()
+    stats_map = {}
+    weights = SP_CATEGORY.get('weights')
+    
+    for rec in records:
+        selected_boxes = rec.choices.split(',')
+        for idx, b_id in enumerate(selected_boxes):
+            weight = weights[idx] if idx < len(weights) else 1
+            stats_map[b_id] = stats_map.get(b_id, 0) + weight
+
     results = []
-    # 遍历计票字典
-    for box_id, score in sp_votes_storage.items():
-        # 在配置中找到对应的 box 结构
+    for box_id, score in stats_map.items():
         box_detail = None
+
         for theme in SP_CATEGORY['themes']:
-            for b in theme['boxes']:
-                if b['id'] == box_id:
-                    # 组合该 Box 内的所有 Boss 信息
-                    bosses = [{**BOSS_POOL[bid], "id": bid} for bid in b['cands']]
+            for box in theme['boxes']:
+                if box['id'] == box_id:
+                    boss_list = [{**BOSS_POOL[bid], "id": bid} for bid in box['cands']]
                     box_detail = {
                         "id": box_id,
                         "score": score,
                         "theme_title": theme['title'],
-                        "bosses": bosses
+                        "bosses": boss_list
                     }
                     break
             if box_detail: break
@@ -208,7 +216,6 @@ def get_sp_stats():
         if box_detail:
             results.append(box_detail)
 
-    # 按分数降序排列，取前 10
     sorted_results = sorted(results, key=lambda x: x['score'], reverse=True)[:10]
     return jsonify({"stats": sorted_results})
 

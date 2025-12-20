@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Spin, Empty, Card, Divider } from 'antd';
 import './StatsPage.css';
+import BgmPlayer from '../components/BgmPlayer';
 
 const StatsPage = () => {
   const [statsData, setStatsData] = useState(null);
@@ -45,6 +46,7 @@ const StatsPage = () => {
 
   return (
     <div className="stats-container">
+      <BgmPlayer audioUrl="/audio/已至.mp3" label="...已至" />
       <header className="stats-tower-header">
         <h1>年度投票统计中心</h1>
       </header>

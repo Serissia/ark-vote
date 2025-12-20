@@ -1,19 +1,82 @@
-.bgm-player-widget {
+.bgm-fixed-anchor {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 2000; /* 确保在最上方 */
+    right: 30px;
+    bottom: 30px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.bgm-btn {
-    width: 45px;
-    height: 45px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(5px);
-    border: none !important;
+/* 核心按钮：方舟菱形切角风格 */
+.bgm-ark-btn {
+    width: 50px !important;
+    height: 50px !important;
+    background: rgba(30, 30, 30, 0.85) !important;
+    border: 1px solid #ffffff33 !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    border-radius: 2px !important; /* 放弃圆形，改用微圆角矩形 */
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); /* 倾斜切角效果 */
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
 }
 
-.bgm-btn:hover {
-    transform: scale(1.1);
+.bgm-ark-btn:hover {
+    background: #b21e1e !important;
+    border-color: #ff4d4f !important;
+    transform: scale(1.05) translateX(-2px);
+}
+
+/* 播放时的激活状态 */
+.bgm-ark-btn.playing {
+    border-color: #b21e1e !important;
+    color: #b21e1e !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 动态脉冲环：模仿侦测波 */
+.bgm-pulse-ring {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border: 2px solid #b21e1e;
+    border-radius: 4px;
+    animation: ark-pulse 2s infinite;
+    z-index: -1;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+}
+
+@keyframes ark-pulse {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* 侧边装饰装饰条 */
+.bgm-deco-line {
+    position: absolute;
+    right: -10px;
+    height: 30px;
+    width: 3px;
+    background: #b21e1e;
+    box-shadow: 0 0 10px #b21e1e;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.is-active .bgm-deco-line {
+    opacity: 1;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .bgm-fixed-anchor {
+        right: 20px;
+        bottom: 40px;
+    }
 }

@@ -252,8 +252,6 @@ BOSS_POOL = {
 # 奖项配置结构
 # 结构：ID -> {标题, 副标题, 候选人列表, 允许选几个, 分数权重}
 VOTE_CATEGORIES = [
-    # TODO:
-    # Speical:昨夜圆车
     {
         "id": "best_support",
         "title": "最佳援助",

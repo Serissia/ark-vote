@@ -4,6 +4,7 @@ import { message } from 'antd';
 import VoteCategory from '../components/VoteCategory';
 import SPVotePage from '../components/SPVotePage';
 import './VotePage.css';
+import BgmPlayer from '../components/BgmPlayer';
 
 const VotePage = () => {
   const [categories, setCategories] = useState([]);
@@ -91,7 +92,7 @@ const VotePage = () => {
   return (
     <div className="vote-page-container">
       {!showDLC ? (
-        <>
+        <><BgmPlayer audioUrl="/audio/已至.mp3" label="...已至" />
           {categories.map(cat => (
             <VoteCategory
             key={cat.id}
