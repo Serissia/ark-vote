@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from config import Config, VOTE_CATEGORIES, ALL_CANDIDATES
+from config import BOSS_POOL, SP_CATEGORY
 from models import db, VoteRecord
 
 app = Flask(__name__)
@@ -22,24 +23,46 @@ def get_config():
     full_categories = []
     
     for cat in VOTE_CATEGORIES:
-        # 将 ID 列表转换为 包含详情的对象列表
-        detailed_candidates = []
-        for cand_id in cat['candidates_ids']:
-            cand_info = ALL_CANDIDATES.get(cand_id, {})
-            detailed_candidates.append({
-                "id": cand_id,
-                **cand_info # 将 name, img_half, img_avatar 解构进去
+
+        if not cat.get('is_sp'):
+            # 将 ID 列表转换为 包含详情的对象列表
+            detailed_candidates = []
+            for cand_id in cat['candidates_ids']:
+                cand_info = ALL_CANDIDATES.get(cand_id, {})
+                detailed_candidates.append({
+                    "id": cand_id,
+                    **cand_info # 将 name, img_half, img_avatar 解构进去
+                })
+            
+            # 构建返回给前端的奖项对象
+            full_categories.append({
+                "id": cat['id'],
+                "title": cat['title'],
+                "subtitle": cat['subtitle'],
+                "max_choices": cat['max_choices'],
+                "candidates": detailed_candidates # 拼装好的完整数据
             })
             
-        # 构建返回给前端的奖项对象
-        full_categories.append({
-            "id": cat['id'],
-            "title": cat['title'],
-            "subtitle": cat['subtitle'],
-            "max_choices": cat['max_choices'],
-            "candidates": detailed_candidates # 拼装好的完整数据
-        })
-        
+        # --- SP 奖项逻辑 (Boss DLC) ---
+        else:
+            detailed_themes = []
+            for theme in cat['themes']:
+                detailed_boxes = []
+                for box in theme['boxes']:
+                    # 加入 if cid in ALL_CANDIDATES 判断
+                    boss_details = [{**ALL_CANDIDATES[cid], "id": cid} for cid in box['cands'] if cid in ALL_CANDIDATES]
+                    detailed_boxes.append({
+                        "id": box['id'],
+                        "boss_details": boss_details
+                    })
+                detailed_themes.append({"title": theme['title'], "boxes": detailed_boxes})
+            
+            full_categories.append({
+                "id": cat['id'], "is_sp": True, "title": cat['title'], 
+                "subtitle": cat['subtitle'], "max_choices": cat['max_choices'],
+                "themes": detailed_themes
+            })
+            
     return jsonify({"categories": full_categories})
 
 # ---------------------------------------------------------
@@ -118,6 +141,76 @@ def get_stats():
         "status": "success",
         "stats": stats_result
     })
+
+sp_votes_storage = {} 
+
+@app.route('/api/sp/config', methods=['GET'])
+def get_sp_config():
+    """获取 Boss DLC 专用的详细配置"""
+    detailed_themes = []
+    for theme in SP_CATEGORY['themes']:
+        detailed_boxes = []
+        for box in theme['boxes']:
+            # 从独立的 BOSS_POOL 中提取数据
+            boss_list = [{**BOSS_POOL[bid], "id": bid} for bid in box['cands']]
+            detailed_boxes.append({
+                "id": box['id'],
+                "boss_details": boss_list
+            })
+        detailed_themes.append({"title": theme['title'], "boxes": detailed_boxes})
+    
+    return jsonify({
+        "title": SP_CATEGORY['title'],
+        "subtitle": SP_CATEGORY['subtitle'],
+        "max_choices": SP_CATEGORY['max_choices'],
+        "themes": detailed_themes
+    })
+
+@app.route('/api/sp/submit', methods=['POST'])
+def submit_sp_vote():
+    """提交 Boss 投票"""
+    data = request.json
+    box_ids = data.get('box_ids', [])
+    if len(box_ids) > SP_CATEGORY['max_choices']:
+        return jsonify({"error": "超出最大选择数"}), 400
+    
+    weights = SP_CATEGORY.get('weights', [1])
+
+    for idx, box_id in enumerate(box_ids):
+        
+        weight = weights[idx] if idx < len(weights) else 1
+        sp_votes_storage[box_id] = sp_votes_storage.get(box_id, 0) + weight
+    
+    return jsonify({"message": "记忆已成功同步"})
+
+@app.route('/api/sp/stats', methods=['GET'])
+def get_sp_stats():
+    """获取 Boss 投票统计结果（带详细信息）"""
+    results = []
+    # 遍历计票字典
+    for box_id, score in sp_votes_storage.items():
+        # 在配置中找到对应的 box 结构
+        box_detail = None
+        for theme in SP_CATEGORY['themes']:
+            for b in theme['boxes']:
+                if b['id'] == box_id:
+                    # 组合该 Box 内的所有 Boss 信息
+                    bosses = [{**BOSS_POOL[bid], "id": bid} for bid in b['cands']]
+                    box_detail = {
+                        "id": box_id,
+                        "score": score,
+                        "theme_title": theme['title'],
+                        "bosses": bosses
+                    }
+                    break
+            if box_detail: break
+        
+        if box_detail:
+            results.append(box_detail)
+
+    # 按分数降序排列，取前 10
+    sorted_results = sorted(results, key=lambda x: x['score'], reverse=True)[:10]
+    return jsonify({"stats": sorted_results})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

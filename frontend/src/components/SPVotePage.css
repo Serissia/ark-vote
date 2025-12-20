@@ -1,0 +1,101 @@
+.sp-page-overlay {
+    width: 100%;
+    min-height: 100vh;
+    padding-bottom: 120px; /* 为底部悬浮按钮留出空间 */
+}
+
+.sp-page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* 标题区域 */
+.sp-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.sp-header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+}
+
+.sp-subtitle {
+    font-size: 18px;
+    color: #666;
+    font-style: italic;
+}
+
+.theme-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 60px 0 30px;
+}
+
+.theme-title-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #b21e1e, transparent);
+}
+
+.theme-title-text {
+    padding: 0 30px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #aba7a7;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* 选框样式 */
+.cand-box-item {
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 3px solid transparent;
+}
+
+.cand-box-item.active {
+    border-color: #66c0f4;
+    box-shadow: 0 10px 30px rgba(102, 192, 244, 0.2);
+    transform: translateY(-2px);
+}
+
+.sp-rank-num {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: #b21e1e;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    z-index: 10;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* 底部操作栏 */
+.sp-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    padding: 25px 0;
+    text-align: center;
+    border-top: 1px solid #eee;
+    z-index: 1000;
+}

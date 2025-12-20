@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { message } from 'antd';
 import VoteCategory from '../components/VoteCategory';
+import SPVotePage from '../components/SPVotePage';
+import './VotePage.css';
 
 const VotePage = () => {
   const [categories, setCategories] = useState([]);
@@ -15,6 +17,8 @@ const VotePage = () => {
     const saved = localStorage.getItem('ark_submitted_status');
     return saved ? JSON.parse(saved) : {};
   }); // { catId: true/false }
+
+  const [showDLC, setShowDLC] = useState(false);
 
   useEffect(() => {
     // 从后端 API 获取配置
@@ -81,17 +85,31 @@ const VotePage = () => {
 
   return (
     <div className="vote-page-container">
-      {categories.map(cat => (
-        <VoteCategory
-          key={cat.id}
-          category={cat}
-          selectedIds={votes[cat.id] || []}
-          isSubmitted={submittedStatus[cat.id]} // 独立的提交状态
-          onSelect={(candId) => handleSelect(cat.id, candId)}
-          onClear={() => handleClear(cat.id)}
-          onSubmit={() => handleSubmit(cat.id)}
-        />
-      ))}
+      {!showDLC ? (
+        <>
+          {categories.map(cat => (
+            <VoteCategory
+            key={cat.id}
+            category={cat}
+            selectedIds={votes[cat.id] || []}
+            isSubmitted={submittedStatus[cat.id]} // 独立的提交状态
+            onSelect={(candId) => handleSelect(cat.id, candId)}
+            onClear={() => handleClear(cat.id)}
+            onSubmit={() => handleSubmit(cat.id)}
+            />
+          ))}
+          
+          {/* 隐秘入口 */}
+          <div className="dlc-entrance-container" style={{ textAlign: 'center', marginTop: '100px' }}>
+            <button className="ghost-dlc-btn" onClick={() => setShowDLC(true)}>
+              回忆往昔...
+            </button>
+          </div>
+        </>
+      ) : (
+        /* 进入 DLC 页面 */
+        <SPVotePage onClose={() => setShowDLC(false)} />
+      )}
     </div>
   );
 };
