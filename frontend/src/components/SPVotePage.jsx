@@ -4,6 +4,7 @@ import { message, Button, Spin, Result, Space, Popconfirm } from 'antd';
 import BossCard from '../components/BossCard';
 import './SPVotePage.css';
 import BgmPlayer from '../components/BgmPlayer';
+import { invalidateStatsCache } from '../apiCache';
 
 const SPVotePage = ({ onClose }) => {
   const [config, setConfig] = useState(null);
@@ -24,14 +25,20 @@ const SPVotePage = ({ onClose }) => {
   }, []);
 
   useEffect(() => {
-    // 请求专属的 SP 接口
-    axios.get('/api/sp/config').then(res => {
-      setConfig(res.data);
-      setLoading(false);
-    }).catch(() => {
-      message.error("DLC 记忆提取失败");
-      setLoading(false);
-    });
+    const controller = new AbortController();
+
+    axios.get('/api/sp/config', { signal: controller.signal })
+      .then(res => {
+        setConfig(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        if (axios.isCancel(err)) return;
+        message.error("DLC 记忆提取失败");
+        setLoading(false);
+      });
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -63,7 +70,8 @@ const SPVotePage = ({ onClose }) => {
     axios.post('/api/sp/submit', { box_ids: selectedBoxIds }).then(() => {
       setIsSubmitted(true);
       message.success("记忆已成功封存。");
-    });
+      invalidateStatsCache();
+    }).catch(err => message.error("未连接到神经网络，请稍后再试。"));
   };
 
   const isVotingEnded = () => {

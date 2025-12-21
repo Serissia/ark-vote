@@ -5,9 +5,12 @@ import VoteCategory from '../components/VoteCategory';
 import SPVotePage from '../components/SPVotePage';
 import './VotePage.css';
 import BgmPlayer from '../components/BgmPlayer';
+import { invalidateStatsCache } from '../apiCache';
+
+let configCache = null;
 
 const VotePage = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(configCache || []);
   
   // 从本地读取数据
   const [votes, setVotes] = useState(() => {
@@ -27,10 +30,21 @@ const VotePage = () => {
   }, []);
 
   useEffect(() => {
-    // 从后端 API 获取配置
-    axios.get('/api/config')
-      .then(res => setCategories(res.data.categories))
-      .catch(err => message.error("无法加载配置数据"));
+    
+    const controller = new AbortController();
+
+    if (!configCache) {
+      axios.get('/api/config', { signal: controller.signal })
+        .then(res => {
+          configCache = res.data.categories;
+          setCategories(configCache);
+        })
+        .catch(err => {
+          if (!axios.isCancel(err)) message.error("无法加载配置数据");
+        });
+    }
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -85,6 +99,7 @@ const VotePage = () => {
       if (res.data.status === 'success') {
         setSubmittedStatus({ ...submittedStatus, [catId]: true });
         message.success(`投票成功！`);
+        invalidateStatsCache();
       }
     }).catch(err => message.error("提交失败，请稍后重试"));
   };

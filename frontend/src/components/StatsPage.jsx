@@ -3,11 +3,12 @@ import axios from 'axios';
 import { Spin, Empty, Card, Divider } from 'antd';
 import './StatsPage.css';
 import BgmPlayer from '../components/BgmPlayer';
+import { configCache, setConfigCache, statsCache, setStatsCache, spStatsCache, setSpStatsCache } from '../apiCache';
 
 const StatsPage = () => {
-  const [statsData, setStatsData] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [spStats, setSpStats] = useState([]);
+  const [statsData, setStatsData] = useState(statsCache?.stats || null);
+  const [categories, setCategories] = useState(configCache || []);
+  const [spStats, setSpStats] = useState(spStatsCache || []);
   const [loading, setLoading] = useState(true);
 
   const isVotingEnded = () => {
@@ -25,27 +26,46 @@ const StatsPage = () => {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const fetchData = async () => {
       try {
-        Promise.all([
-          axios.get('/api/config'),
-          axios.get('/api/stats')
-        ]).then(([configRes, statsRes]) => {
-          setCategories(configRes.data.categories);
-          setStatsData(statsRes.data.stats);
-        });
-
-        if (isDLCUnlocked) {
-          const resSp = await axios.get('/api/sp/stats');
+        setLoading(true);
+        
+        const requests = [];
+        if (!configCache) requests.push(axios.get('/api/config', { signal: controller.signal }));
+        if (!statsCache) requests.push(axios.get('/api/stats', { signal: controller.signal }));
+        
+        if(requests.length > 0){
+          const results = await Promise.all(requests);
+          results.forEach(res => {
+            if (res.config?.url.includes('/api/config')) {
+              setConfigCache(res.data.categories);
+              setCategories(res.data.categories);
+            }
+            if (res.config?.url.includes('/api/stats')) {
+              setStatsCache(res.data);
+              setStatsData(res.data.stats);
+            }
+          });
+        }
+        
+        if (isDLCUnlocked && (!spStatsCache) ) {
+          const resSp = await axios.get('/api/sp/stats', { signal: controller.signal });
+          setSpStatsCache(resSp.data.stats);
           setSpStats(resSp.data.stats);
         }
       } catch (err) {
-        console.error("加载统计失败", err);
+        if (!axios.isCancel(err)) console.error("加载统计失败", err);
       } finally {
-        setLoading(false);
+        if (!signal.aborted) setLoading(false);
       }
     };
+
     fetchData();
+
+    return () => controller.abort();
   }, [isDLCUnlocked]);
 
   if (loading) return <div className="stats-loading"><Spin size="large" tip="正在翻阅档案..." /></div>;
