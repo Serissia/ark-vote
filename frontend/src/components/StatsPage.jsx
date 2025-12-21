@@ -10,7 +10,14 @@ const StatsPage = () => {
   const [spStats, setSpStats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const isDLCUnlocked = localStorage.getItem('sp_is_submitted') !== null;
+  const isVotingEnded = () => {
+    const deadline = new Date('2026-01-01T00:00:00');
+    return new Date() >= deadline;
+  };
+
+  const ended = isVotingEnded();
+
+  const isDLCUnlocked = ended || localStorage.getItem('sp_is_submitted') !== null;
 
   useEffect(() => {
     // 切换页面时，立刻回到顶部

@@ -11,3 +11,16 @@
     color: rgba(255,255,255,0.4);
     text-shadow: 0 0 10px #a4d007;
 }
+
+.vote-ended-banner {
+    background: #b21e1e;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    position: sticky;
+    top: 60px; /* 导航栏下方 */
+    z-index: 999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}

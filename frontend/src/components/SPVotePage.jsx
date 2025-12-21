@@ -66,6 +66,13 @@ const SPVotePage = ({ onClose }) => {
     });
   };
 
+  const isVotingEnded = () => {
+    const deadline = new Date('2026-01-01T00:00:00');
+    return new Date() >= deadline;
+  };
+
+  const ended = isVotingEnded();
+
   if (loading) return <div className="sp-loading-container"><Spin size="large" /></div>;
   if (!config) return <Result status="404" title="记忆缺失" />;
 
@@ -125,14 +132,14 @@ const SPVotePage = ({ onClose }) => {
               okText="确定" 
               cancelText="取消"
             >
-              <Button size="large" disabled = {isSubmitted}>清除选项</Button>
+              <Button size="large" disabled = {isSubmitted || ended}>清除选项</Button>
             </Popconfirm>
 
             <Button 
               type="primary" 
               danger 
               size="large" 
-              disabled={selectedBoxIds.length === 0 || isSubmitted}
+              disabled={selectedBoxIds.length === 0 || isSubmitted || ended}
               onClick={handleSubmit}
             >
               {isSubmitted ? "记忆已封存" : "提交记忆"}

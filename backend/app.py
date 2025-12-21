@@ -4,6 +4,9 @@ from flask_cors import CORS
 from config import Config, VOTE_CATEGORIES, ALL_CANDIDATES
 from config import BOSS_POOL, SP_CATEGORY
 from models import db, VoteRecord
+from datetime import datetime
+
+VOTE_DEADLINE = datetime(2026, 1, 1, 0, 0, 0)
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -14,11 +17,18 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+def is_vote_ended():
+    return datetime.now() >= VOTE_DEADLINE
+
 # ---------------------------------------------------------
 # API 1: 获取配置 (前端根据这个动态生成页面)
 # ---------------------------------------------------------
 @app.route('/api/config', methods=['GET'])
 def get_config():
+
+    if is_vote_ended():
+        return jsonify({"error": "投票已截止，感谢参与！"}), 403
+
     # 动态拼装完整配置
     full_categories = []
     
@@ -167,6 +177,10 @@ def get_sp_config():
 @app.route('/api/sp/submit', methods=['POST'])
 def submit_sp_vote():
     """提交 Boss 投票"""
+
+    if is_vote_ended():
+        return jsonify({"error": "投票已截止，感谢参与！"}), 403
+
     data = request.json
     box_ids = data.get('box_ids', [])
     if len(box_ids) > SP_CATEGORY['max_choices']:

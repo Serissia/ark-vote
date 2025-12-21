@@ -89,8 +89,21 @@ const VotePage = () => {
     }).catch(err => message.error("提交失败，请稍后重试"));
   };
 
+  const isVotingEnded = () => {
+    const deadline = new Date('2026-01-01T00:00:00');
+    return new Date() >= deadline;
+  };
+
+  const ended = isVotingEnded();
+
   return (
     <div className="vote-page-container">
+      {ended && (
+        <div className="vote-ended-banner">
+          ⚠️ 2025 年度投票已圆满结束，当前仅供浏览。请前往“总数据”查看最终统计。
+        </div>
+      )}
+
       {!showDLC ? (
         <><BgmPlayer audioUrl="/audio/已至.mp3" label="...已至" />
           {categories.map(cat => (
@@ -98,7 +111,7 @@ const VotePage = () => {
             key={cat.id}
             category={cat}
             selectedIds={votes[cat.id] || []}
-            isSubmitted={submittedStatus[cat.id]} // 独立的提交状态
+            isSubmitted={submittedStatus[cat.id] || ended} // 独立的提交状态
             onSelect={(candId) => handleSelect(cat.id, candId)}
             onClear={() => handleClear(cat.id)}
             onSubmit={() => handleSubmit(cat.id)}
