@@ -26,9 +26,6 @@ def is_vote_ended():
 @app.route('/api/config', methods=['GET'])
 def get_config():
 
-    if is_vote_ended():
-        return jsonify({"error": "投票已截止，感谢参与！"}), 403
-
     # 动态拼装完整配置
     full_categories = []
     
@@ -80,6 +77,9 @@ def get_config():
 # ---------------------------------------------------------
 @app.route('/api/vote', methods=['POST'])
 def submit_vote():
+    if is_vote_ended():
+        return jsonify({"error": "投票已截止，感谢参与！"}), 403
+
     data = request.json
     # 预期数据格式: 
     # { 
