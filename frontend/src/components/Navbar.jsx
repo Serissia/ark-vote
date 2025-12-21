@@ -2,6 +2,8 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVoteYea, faChartBar, faCube } from '@fortawesome/free-solid-svg-icons';
+import { GithubOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import './Navbar.css';
 
 const Navbar = ({ activeTab, onTabChange }) => {
@@ -29,6 +31,21 @@ const Navbar = ({ activeTab, onTabChange }) => {
                 >
                     <FontAwesomeIcon icon={faChartBar} />
                     <span>总数据</span>
+                </div>
+
+                <div
+                    className="nav-item"
+                >
+                    <Tooltip title="前往 GitHub 仓库">
+                        <a 
+                            href="https://github.com/Serissia/ark-vote"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="github-link"
+                        >
+                            <GithubOutlined style={{ fontSize: '22px' }} />
+                        </a>
+                    </Tooltip>
                 </div>
             </div>
         </nav>
