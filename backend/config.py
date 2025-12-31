@@ -289,7 +289,7 @@ VOTE_CATEGORIES = [
     {
         "id": "best_vanilla",
         "title": "最香草（",
-        "subtitle": "终于欲望吧...",
+        "subtitle": "忠于欲望吧...",
         "max_choices": 3,
         "weights": [5, 3, 2],
         "candidates_ids": [

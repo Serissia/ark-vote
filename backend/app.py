@@ -1,5 +1,5 @@
 # backend/app.py
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from config import Config, VOTE_CATEGORIES, ALL_CANDIDATES
 from config import BOSS_POOL, SP_CATEGORY
@@ -8,7 +8,7 @@ from datetime import datetime
 
 VOTE_DEADLINE = datetime(2026, 1, 1, 0, 0, 0)
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.', static_url_path='')
 app.config.from_object(Config)
 CORS(app) # 允许前端跨域访问
 db.init_app(app)
@@ -19,6 +19,10 @@ with app.app_context():
 
 def is_vote_ended():
     return datetime.now() >= VOTE_DEADLINE
+
+@app.route('/')
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
 
 # ---------------------------------------------------------
 # API 1: 获取配置 (前端根据这个动态生成页面)

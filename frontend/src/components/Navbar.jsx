@@ -3,10 +3,32 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVoteYea, faChartBar, faCube } from '@fortawesome/free-solid-svg-icons';
 import { GithubOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Tooltip, Modal } from 'antd';
 import './Navbar.css';
 
 const Navbar = ({ activeTab, onTabChange }) => {
+    const isVotingEnded = () => {
+        const deadline = new Date('2026-01-01T00:00:00');
+        return new Date() >= deadline;
+    };
+
+    const ended = isVotingEnded();
+    const isDLCUnlocked = ended || localStorage.getItem('sp_is_submitted') !== null;
+
+    const handleStatsClick = () => {
+        if (!isDLCUnlocked && activeTab !== 'stats') {
+            Modal.confirm({
+                title: '提示',
+                content: '你尚未进入隐藏页面并进行投票，现在就前往总数据页面吗？',
+                okText: '确认',
+                cancelText: '取消',
+                onOk: () => onTabChange('stats')
+            });
+        } else {
+            onTabChange('stats');
+        }
+    };
+
     return (
         <nav className="glass-nav">
             {/* 标题部分 */}
@@ -27,7 +49,7 @@ const Navbar = ({ activeTab, onTabChange }) => {
 
                 <div 
                     className={`nav-item ${activeTab === 'stats' ? 'active' : ''}`}
-                    onClick={() => onTabChange('stats')}
+                    onClick={handleStatsClick}
                 >
                     <FontAwesomeIcon icon={faChartBar} />
                     <span>总数据</span>

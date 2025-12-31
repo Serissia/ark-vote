@@ -1,6 +1,7 @@
 .ghost-dlc-btn {
     background: transparent;
     border: none;
+    font-size: 24px; /* 更大字体，防止没人找到 */
     color: rgba(255,255,255,0.2);
     cursor: pointer;
     margin-top: 100px;
